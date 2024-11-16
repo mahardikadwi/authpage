@@ -6,12 +6,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const USER_REGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,23}/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Auth = () => {
+  const navigate = useNavigate();
   const UserRef = useRef();
   const ErrRef = useRef();
 
@@ -114,6 +116,18 @@ const Auth = () => {
     }
   };
 
+  const handleRedirect = () => {
+    setSuccess(false);
+    resetForm()
+
+    if (isLoginMode) {
+      navigate("/");
+    } else {
+      setIsLoginMode(true);
+      navigate("/auth");
+    }
+  };
+
   return (
     <section className="container">
       <div className="form-content">
@@ -121,11 +135,9 @@ const Auth = () => {
           <>
             <h1>Success!</h1>
             <p>{isLoginMode ? "login success" : "registration successful"}</p>
-            <button className="confirm-btn" onClick={() => {
-              setSuccess(false);
-              resetForm();
-              setIsLoginMode(true);
-            }}>To login page</button>
+            <button className="confirm-btn" onClick={handleRedirect}>
+              {isLoginMode ? "Go to homepage" : "Go to Login"}
+            </button>
           </>
         ) : (
           <>
