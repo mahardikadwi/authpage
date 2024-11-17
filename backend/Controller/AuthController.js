@@ -33,3 +33,17 @@ export const AuthLogin = async (req, res) => {
         res.status(500).json({ message: 'Error logging in', error });
     }
 };
+
+export const userProfile = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.userId, {
+            attributes: ['username', 'email'],
+        });
+
+        if(!user) {
+            return res.status(400).json({ message: "User not found!" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching data!" });
+    }
+};
