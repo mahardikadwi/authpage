@@ -21,7 +21,13 @@ export const AuthLogin = async (req, res) => {
             return res.status(401).json({ message: 'invalid credentials' });
         }
         const token = jwt.sign({ userId: user.id }, process.env.JWT_KEY, {});
-        res.json({ token });
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            maxAge: 60 * 60 * 100,
+            sameSite: 'Strict',
+        });
+        res.json({ user: { username: user.username, email: user.email } });
         console.log("login success")
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });

@@ -85,7 +85,7 @@ const Auth = () => {
     setValidEmail(false);
     setValidPassword(false);
     setValidMatch(false);
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -102,23 +102,29 @@ const Auth = () => {
     if (!isLoginMode) {
       try {
         await axios.post("users/register", { username: user, email, password });
+        setSuccess(true);
       } catch (error) {
-        setErrMessage(error.response?.data?.message || "Error occured during registration");
+        setErrMessage(
+          error.response?.data?.message || "Error occured during registration"
+        );
+        setSuccess(false);
       }
-      setSuccess(true);
     } else {
       try {
         await axios.post("users/login", { username: user, email, password });
+        setSuccess(true);
       } catch (error) {
-        setErrMessage(error.response?.data?.message || "Error occured during login")
+        setErrMessage(
+          error.response?.data?.message || "Error occured during login"
+        );
+        setSuccess(false);
       }
-      setSuccess(true);
     }
   };
 
   const handleRedirect = () => {
     setSuccess(false);
-    resetForm()
+    resetForm();
 
     if (isLoginMode) {
       navigate("/");
@@ -268,44 +274,44 @@ const Auth = () => {
                   <span aria-label="percentage symbol">%</span>
                 </p>
               </div>
-                <div>
-                  <label htmlFor="confPassword">
-                    Confirm Password
-                    <span
-                      className={validMatch && passwordMatch ? "valid" : "hide"}
-                    >
-                      <FontAwesomeIcon icon={faCheck} />
-                    </span>
-                    <span
-                      className={
-                        validMatch || !passwordMatch ? "hide" : "invalid"
-                      }
-                    >
-                      <FontAwesomeIcon icon={faTimes} />
-                    </span>
-                  </label>
-                  <input
-                    type="password"
-                    id="confPassword"
-                    name="password"
-                    placeholder="Reenter your Password"
-                    onChange={(e) => setPasswordMatch(e.target.value)}
-                    aria-invalid={passwordMatch ? "false" : "true"}
-                    aria-describedby="confirmnote"
-                    onFocus={() => setMatchFocus(true)}
-                    onBlur={() => setMatchFocus(false)}
-                    required
-                  />
-                  <p
-                    id="confirmnote"
+              <div>
+                <label htmlFor="confPassword">
+                  Confirm Password
+                  <span
+                    className={validMatch && passwordMatch ? "valid" : "hide"}
+                  >
+                    <FontAwesomeIcon icon={faCheck} />
+                  </span>
+                  <span
                     className={
-                      matchFocus && !validMatch ? "instruction" : "offscreen"
+                      validMatch || !passwordMatch ? "hide" : "invalid"
                     }
                   >
-                    <FontAwesomeIcon icon={faInfoCircle} />
-                    Password doesn't match
-                  </p>
-                </div>
+                    <FontAwesomeIcon icon={faTimes} />
+                  </span>
+                </label>
+                <input
+                  type="password"
+                  id="confPassword"
+                  name="password"
+                  placeholder="Reenter your Password"
+                  onChange={(e) => setPasswordMatch(e.target.value)}
+                  aria-invalid={passwordMatch ? "false" : "true"}
+                  aria-describedby="confirmnote"
+                  onFocus={() => setMatchFocus(true)}
+                  onBlur={() => setMatchFocus(false)}
+                  required
+                />
+                <p
+                  id="confirmnote"
+                  className={
+                    matchFocus && !validMatch ? "instruction" : "offscreen"
+                  }
+                >
+                  <FontAwesomeIcon icon={faInfoCircle} />
+                  Password doesn't match
+                </p>
+              </div>
               <button
                 type="submit"
                 id="register-btn"
