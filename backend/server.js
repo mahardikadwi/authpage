@@ -2,7 +2,8 @@ import express from "express"
 import userRoutes from "./Auth/AuthRoutes.js"
 import dotenv from "dotenv"
 import cors from "cors"
-import db from "../backend/Config/Database.js";
+import cookieParser from "cookie-parser";
+// import db from "../backend/Config/Database.js";
 
 dotenv.config();
 const app = express();
@@ -14,15 +15,16 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
+app.use(cookieParser())
 app.use("/users", userRoutes);
 
 app.get("/", (req, res) => {
     res.send("backend is running!")
 });
 
-db.sync({ alter: true }).then(() => {
-    console.log("db updated!")
-});
+// db.sync({ alter: true }).then(() => {
+//     console.log("db updated!")
+// });
 
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`);
