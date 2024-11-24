@@ -7,8 +7,11 @@ const Home = () => {
       <h1>Welcome to the Home Page!</h1>
       <p>Choose an option to continue:</p>
       <div>
-        <Link to="/auth">
-          <button>Login / Sign up</button>
+        <Link to="/login">
+          <button>Login</button>
+        </Link>
+        <Link to="/register">
+          <button>Sign up</button>
         </Link>
       </div>
     </div>

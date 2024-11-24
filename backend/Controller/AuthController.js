@@ -15,24 +15,42 @@ export const AuthRegister = async (req, res) => {
 
 export const AuthLogin = async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const user = await User.findOne({ where: { email } });
-        if(!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'invalid credentials' });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ message: "Invalid credentials" });
         }
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_KEY, {});
-        res.cookie('token', token, {
+
+        const token = jwt.sign(
+            { userId: user.id, email },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "15m" } // Adjust expiration time if needed
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: user.id, email },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        // Send refresh token as a cookie
+        res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 60 * 60 * 1000,
-            sameSite: 'Strict',
+            secure: false, // Set to true in production
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000,
         });
-        res.json({ user: { username: user.username, email: user.email }, accessToken: token });
-        console.log("login success")
+
+        // Respond with access token
+        res.json({ accessToken: token });
+        console.log("Login successful");
     } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error });
+        console.error("Error during login:", error);
+        res.status(500).json({ message: "Error logging in", error });
     }
 };
+
 
 export const userProfile = async (req, res) => {
     try {
