@@ -24,10 +24,10 @@ export const AuthLogin = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            maxAge: 60 * 60 * 100,
+            maxAge: 60 * 60 * 1000,
             sameSite: 'Strict',
         });
-        res.json({ user: { username: user.username, email: user.email } });
+        res.json({ user: { username: user.username, email: user.email }, accessToken: token });
         console.log("login success")
     } catch (error) {
         res.status(500).json({ message: 'Error logging in', error });
