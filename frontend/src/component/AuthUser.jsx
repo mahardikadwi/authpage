@@ -14,7 +14,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Auth = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const UserRef = useRef();
   const ErrRef = useRef();
@@ -147,9 +147,9 @@ const Auth = () => {
   return (
     <section className="container">
       <div className="form-content">
-        {success ? (
+        {success && auth ? (
           <>
-            <h1>Success!</h1>
+            <h1>Success! Welcome {auth.username}</h1>
             <p>{isLoginMode ? "login success" : "registration successful"}</p>
             <button className="confirm-btn" onClick={handleRedirect}>
               {isLoginMode ? "Go to homepage" : "Go to Login"}
