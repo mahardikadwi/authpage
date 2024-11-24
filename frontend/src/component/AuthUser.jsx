@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
+import AuthContext from "../context/AuthProvider";
 import {
   faCheck,
   faTimes,
@@ -13,6 +14,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Auth = () => {
+  const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const UserRef = useRef();
   const ErrRef = useRef();
@@ -111,13 +113,21 @@ const Auth = () => {
       }
     } else {
       try {
-        await axios.post("users/login", { username: user, email, password });
+        const response = await axios.post("users/login", { username: user, email, password });
+        const userData = response.data.user;
+        setAuth(userData); 
         setSuccess(true);
       } catch (error) {
-        setErrMessage(
-          error.response?.data?.message || "Error occured during login"
-        );
-        setSuccess(false);
+        if (!error?.response) {
+          setErrMessage("No server response!");
+        } else if (error.response?.status === 400) {
+          setErrMessage("Missing user data");
+        } else if (error.response?.status === 401) {
+          setErrMessage("Unauthorized");
+        } else {
+          setErrMessage("login failed");
+        }
+        ErrRef.current.focus();
       }
     }
   };
