@@ -25,7 +25,7 @@ export const AuthLogin = async (req, res) => {
         const token = jwt.sign(
             { userId: user.id, email },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "15m" } // Adjust expiration time if needed
+            { expiresIn: "15m" } 
         );
 
         const refreshToken = jwt.sign(
@@ -34,7 +34,6 @@ export const AuthLogin = async (req, res) => {
             { expiresIn: "1d" }
         );
 
-        // Send refresh token as a cookie
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             secure: false, // Set to true in production
@@ -51,17 +50,3 @@ export const AuthLogin = async (req, res) => {
     }
 };
 
-
-export const userProfile = async (req, res) => {
-    try {
-        const user = await User.findByPk(req.userId, {
-            attributes: ['username', 'email'],
-        });
-
-        if(!user) {
-            return res.status(400).json({ message: "User not found!" });
-        }
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching data!" });
-    }
-};

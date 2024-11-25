@@ -1,16 +1,26 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth.jsx";
 import axios from "../api/axios";
 
 const Login = () => {
-  const { auth, setAuth } = useContext(AuthContext);
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const userRef = useRef();
   const ErrRef = useRef();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMessage, setErrMessage] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    setErrMessage("");
+  }, [email, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,9 +29,9 @@ const Login = () => {
         email: email,
         password,
       });
-      const userData = response.data.user;
-      setAuth(userData);
-      navigate("/");
+      const accessToken = response?.data?.accessToken;
+      setAuth({ email, password, accessToken });
+      setSuccess(true);
     } catch (error) {
       setErrMessage(
         error.response?.data?.message || "Login failed. Please try again."
@@ -31,42 +41,61 @@ const Login = () => {
   };
 
   return (
-    <section className="container">
-      <div className="form-content">
-        <p ref={ErrRef} className={errMessage ? "errMsg" : "offscreen"}>
-          {errMessage}
-        </p>
-        <h2>Login</h2>
-        <form className="form-fields" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email">Email:</label>
-            <input
-              type="text"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+    <>
+      {success ? (
+        <section className="form-content">
+          <h1>You are logged in as {auth.email}</h1>
+          <br />
+          <p>
+            <a href="#">Go to Home</a>
+          </p>
+        </section>
+      ) : (
+        <section>
+          <div className="form-content">
+            <p ref={ErrRef} className={errMessage ? "errMsg" : "offscreen"}>
+              {errMessage}
+            </p>
+            <h2>Login</h2>
+            <form className="form-fields" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="email">Email:</label>
+                <input
+                  type="text"
+                  id="email"
+                  ref={userRef}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password">Password:</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button type="submit" id="register-btn">
+                Login
+              </button>
+              <p
+                className="confirm-btn"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/register");
+                }}
+              >
+                Not registered yet? Click here
+              </p>
+            </form>
           </div>
-          <div>
-            <label htmlFor="password">Password:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <button type="submit" id="register-btn">
-            Login
-          </button>
-          <button className="confirm-btn" onClick={(e) => {e.preventDefault(); navigate("/register")}}>
-            Not registered yet? Click here
-          </button>
-        </form>
-      </div>
-    </section>
+        </section>
+      )}
+    </>
   );
 };
 

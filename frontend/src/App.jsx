@@ -1,19 +1,22 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import './App.css'
-import Home from "../src/component/Home.jsx"
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import Home from "../src/component/Home.jsx";
 import Login from "./component/Login.jsx";
 import Register from "./component/Register.jsx";
+import Profiles from "./pages/Profiles.jsx";
+import Layout from "./component/Layout.jsx";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home/>} /> 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Home />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="profile" element={<Profiles />} />
+      </Route>
+    </Routes>
   );
 };
 

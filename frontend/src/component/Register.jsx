@@ -45,7 +45,7 @@ const Register = () => {
   };
 
   return (
-    <section className="container">
+    <section>
       <div className="form-content">
         <p
           ref={ErrRef}
@@ -197,9 +197,9 @@ const Register = () => {
           >
             Register
           </button>
-          <button className="confirm-btn" onClick={() => navigate("/login")}>
+          <p className="confirm-btn" onClick={() => navigate("/login")}>
             Already have an account? Login
-          </button>
+          </p>
         </form>
       </div>
     </section>
