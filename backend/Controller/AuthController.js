@@ -50,3 +50,12 @@ export const AuthLogin = async (req, res) => {
     }
 };
 
+export const AuthLogout = (req, res) => {
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+            secure: false, // Set to true in production
+            sameSite: "strict",
+    });
+    res.json({ message: "Logged out successfully" });
+}
+
